@@ -8,13 +8,35 @@
 import SwiftUI
 
 struct HeaderView: View {
+    let title: String
+    let subtitle: String
+    let headerColor: Color
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ZStack {
+            RoundedRectangle(cornerRadius: 0)
+                .foregroundColor(headerColor)
+                .ignoresSafeArea()
+            
+            VStack {
+                Text(title)
+                    .font(.system(size: 30))
+                    .foregroundColor(.white)
+                    .bold()
+                    .padding()
+                Text(subtitle)
+                    .font(.system(size: 20))
+                    .foregroundColor(.white)
+
+            }
+        }
     }
 }
 
 struct HeaderView_Previews: PreviewProvider {
     static var previews: some View {
-        HeaderView()
+        HeaderView(title: "Title",
+                   subtitle: "SubTitle",
+                   headerColor: Color.pink)
     }
 }

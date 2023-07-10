@@ -13,7 +13,16 @@ struct ContentView: View {
     
     var body: some View {
         if viewModel.isLoggedIn {
-            ProfileView()
+            TabView {
+                TaskListView(userId: Auth.auth().currentUser!.uid)
+                    .tabItem {
+                        Label("Tasks", systemImage: "list.clipboard")
+                    }
+                ProfileView()
+                    .tabItem {
+                        Label("Profile", systemImage: "person.circle")
+                    }
+            }
         } else {
             LoginView()
         }

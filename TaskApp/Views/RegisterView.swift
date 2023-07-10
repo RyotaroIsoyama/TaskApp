@@ -12,23 +12,9 @@ struct RegisterView: View {
     
     var body: some View {
         VStack {
-            ZStack {
-                RoundedRectangle(cornerRadius: 0)
-                    .foregroundColor(Color.green)
-                    .ignoresSafeArea()
-                
-                VStack {
-                    Text("Welecome TaskApp")
-                        .font(.system(size: 30))
-                        .foregroundColor(.white)
-                        .bold()
-                        .padding()
-                    Text("Let's create your account")
-                        .font(.system(size: 20))
-                        .foregroundColor(.white)
-
-                }
-            }
+            HeaderView(title: "Welcome to TaskApp",
+                       subtitle: "Let's create your account",
+                       headerColor: Color.green)
             
             Form {
                 TextField("Name", text: $viewModel.name)

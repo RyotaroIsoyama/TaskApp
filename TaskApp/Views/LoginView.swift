@@ -13,23 +13,9 @@ struct LoginView: View {
     var body: some View {
         NavigationView {
             VStack {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 0)
-                        .foregroundColor(Color.blue)
-                        .ignoresSafeArea()
-                    
-                    VStack {
-                        Text("Please Login")
-                            .font(.system(size: 30))
-                            .foregroundColor(.white)
-                            .bold()
-                            .padding()
-                        Text("Enter your account information")
-                            .font(.system(size: 20))
-                            .foregroundColor(.white)
-
-                    }
-                }
+                HeaderView(title: "Please Login",
+                           subtitle: "Enter your account information",
+                           headerColor: Color.blue)
                 
                 Form {
                     
