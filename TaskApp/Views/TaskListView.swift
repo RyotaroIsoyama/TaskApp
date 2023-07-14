@@ -23,7 +23,9 @@ struct TaskListView: View {
         NavigationView {
             VStack {
                 List(tasks) { task in
-                    TaskItemView(task: task)
+                    NavigationLink(destination: TaskDetailView(task: task)) {
+                        TaskItemView(task: task)
+                    }
                 }
             }
             .navigationTitle("Task List")
