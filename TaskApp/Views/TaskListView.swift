@@ -5,10 +5,11 @@
 //  Created by 久保田陽介 on 2023/07/08.
 //
 import FirebaseFirestoreSwift
+import FirebaseAuth
 import SwiftUI
 
 struct TaskListView: View {
-    @StateObject var viewModel = TaskListViewViewModel()
+    @StateObject var viewModel: TaskListViewViewModel
     @FirestoreQuery var tasks: [Task]
     
     private let userId: String
@@ -17,6 +18,10 @@ struct TaskListView: View {
         self.userId = userId
         
         self._tasks = FirestoreQuery(collectionPath: "users/\(userId)/tasks")
+        
+        //_viewModel プロパティラッパーStateObjectの補助プロパティ
+        //wrappedValue StateObjectに初期値を与える
+        self._viewModel = StateObject(wrappedValue: TaskListViewViewModel(userId: userId))
     }
     
     var body: some View {
@@ -26,7 +31,14 @@ struct TaskListView: View {
                     NavigationLink(destination: TaskDetailView(task: task)) {
                         TaskItemView(task: task)
                     }
+                    .swipeActions {
+                        Button("Delete") {
+                            viewModel.delete(id: task.id)
+                        }
+                        .tint(.red)
+                    }
                 }
+                
             }
             .navigationTitle("Task List")
             .toolbar {
