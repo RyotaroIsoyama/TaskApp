@@ -26,7 +26,8 @@ class NewTaskViewViewModel: ObservableObject {
         let newTask = Task(id: taskId,
                            title: title,
                            dueDate: dueDate.timeIntervalSince1970,
-                           createDate: Date().timeIntervalSince1970
+                           createDate: Date().timeIntervalSince1970,
+                           isDone: false
         )
         
         let db = Firestore.firestore()

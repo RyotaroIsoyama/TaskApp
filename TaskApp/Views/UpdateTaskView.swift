@@ -58,7 +58,7 @@ struct UpdateTaskView_Previews: PreviewProvider {
         }), task: .init(id: "1",
                         title: "title",
                         dueDate: Date().timeIntervalSince1970,
-                        createDate: Date().timeIntervalSince1970
+                        createDate: Date().timeIntervalSince1970, isDone: false
                        ))
     }
 }

@@ -11,6 +11,7 @@ import SwiftUI
 struct TaskListView: View {
     @StateObject var viewModel: TaskListViewViewModel
     @FirestoreQuery var tasks: [Task]
+    @State private var isDoneOnly = false
     
     private let userId: String
     
@@ -24,21 +25,32 @@ struct TaskListView: View {
         self._viewModel = StateObject(wrappedValue: TaskListViewViewModel(userId: userId))
     }
     
+    var filteredTasks: [Task] {
+        tasks.filter { task in
+            (!isDoneOnly || !task.isDone)
+        }
+    }
+    
     var body: some View {
         NavigationView {
             VStack {
-                List(tasks) { task in
-                    NavigationLink(destination: TaskDetailView(task: task)) {
-                        TaskItemView(task: task)
+                List {
+                    Toggle(isOn: $isDoneOnly) {
+                        Text("Not Done Tasks only")
                     }
-                    .swipeActions {
-                        Button("Delete") {
-                            viewModel.delete(id: task.id)
+                    
+                    ForEach(filteredTasks) { task in
+                        NavigationLink(destination: TaskDetailView(task: task)) {
+                            TaskItemView(task: task)
                         }
-                        .tint(.red)
+                        .swipeActions {
+                            Button("Delete") {
+                                viewModel.delete(id: task.id)
+                            }
+                            .tint(.red)
+                        }
                     }
                 }
-                
             }
             .navigationTitle("Task List")
             .toolbar {
