@@ -10,6 +10,7 @@ import Foundation
 
 class UpdateTaskViewViewModel: ObservableObject {
     @Published var title = ""
+    @Published var category: Category = .work
     @Published var dueDate = Date()
     
     func update(id: String) {
@@ -24,6 +25,7 @@ class UpdateTaskViewViewModel: ObservableObject {
         let taskId = id
         let updatedTask = Task(id: taskId,
                                title: title,
+                               category: Category(rawValue: category.rawValue) ?? .work,
                                dueDate: dueDate.timeIntervalSince1970,
                                createDate: Date().timeIntervalSince1970,
                                isDone: false
