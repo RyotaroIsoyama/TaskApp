@@ -15,7 +15,6 @@ struct CategoryRowView: View {
     init(categoryName: String) {
         let userId = Auth.auth().currentUser!.uid
         self._tasks = FirestoreQuery(collectionPath: "users/\(userId)/tasks")
-        //self.categoryNumber = categoryNumber
         self.categoryName = categoryName
     }
     
@@ -29,15 +28,19 @@ struct CategoryRowView: View {
             ScrollView(.horizontal) {
                 HStack(alignment: .top, spacing: 0) {
                     ForEach(tasks.filter { $0.category.rawValue == categoryName }) { task in
-                        VStack(alignment: .leading) {
-                            Image(systemName: "car.fill")
-                                .resizable()
-                                .frame(width: 100, height: 100)
-                                .cornerRadius(5)
-                            Text(task.title)
-                                .font(.caption)
+                        NavigationLink(destination: TaskDetailView(task: task)) {
+                            VStack(alignment: .leading) {
+                                Text(task.title)
+                                    .foregroundColor(Color.black)
+                                    .bold()
+                                    .frame(width: 100, height: 100)
+                                    .overlay {
+                                        RoundedRectangle(cornerRadius: 8).stroke(.gray, lineWidth: 4)
+                                    }
+                                    .shadow(radius: 7)
+                            }
+                            .padding(5)
                         }
-                        .padding(.leading, 15)
                     }
                 }
             }

@@ -51,13 +51,21 @@ struct TaskListView: View {
                         }
                     }
                 }
+                .scrollContentBackground(.hidden)
+                .background(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.white]), startPoint: .top, endPoint: .bottom))
             }
-            .navigationTitle("Task List")
+            .navigationBarItems(leading: Text("Task List")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .foregroundColor(.white)
+                .padding(.top, 50)
+                .padding(.bottom, 30))
             .toolbar {
                 Button {
                     viewModel.showingNewTaskView = true
                 } label: {
                     Image(systemName: "plus")
+                        .foregroundColor(.white)
                 }
             }
             .sheet(isPresented: $viewModel.showingNewTaskView) {

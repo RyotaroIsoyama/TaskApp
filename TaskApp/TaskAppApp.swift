@@ -9,6 +9,8 @@ import SwiftUI
 
 @main
 struct TaskAppApp: App {
+    @StateObject var viewModel = AuthViewModel()
+    
     init(){
         FirebaseApp.configure()
     }
@@ -16,6 +18,7 @@ struct TaskAppApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(viewModel)
         }
     }
 }

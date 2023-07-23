@@ -10,9 +10,11 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject var viewModel = ContentViewViewModel()
+    @EnvironmentObject var authViewModel: AuthViewModel
     
     var body: some View {
-        if viewModel.isLoggedIn {
+        //if viewModel.isLoggedIn {
+        if authViewModel.userSession != nil {
             TabView {
                 TaskListView(userId: Auth.auth().currentUser!.uid)
                     .tabItem {

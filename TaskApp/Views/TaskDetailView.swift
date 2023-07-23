@@ -14,20 +14,27 @@ struct TaskDetailView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack {
+            VStack (alignment: .leading) {
+                HStack {
+                    Text("タスク名")
                     Text(task.title )
-                        .font(.system(size: 22, weight: .regular))
+                        .font(.system(size: 22, weight: .bold))
                         .padding()
-                    
+                }
+                
+                HStack {
+                    Text("カテゴリー")
                     Text(task.category.rawValue)
-                    
+                }
+                
+                HStack {
+                    Text("期限")
                     Text("\(Date(timeIntervalSince1970: task.dueDate).formatted(date: .abbreviated, time: .shortened))")
                         .font(.system(size: 22, weight: .regular))
                         .padding()
-                    
-                    Spacer()
                 }
+                
+                Spacer()
             }
             .toolbar {
                 ToolbarItem {

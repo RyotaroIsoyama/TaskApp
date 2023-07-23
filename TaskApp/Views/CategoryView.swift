@@ -9,16 +9,23 @@ import FirebaseAuth
 import SwiftUI
 
 struct CategoryView: View {
-    let categories = ["仕事", "家事", "プライベート", "その他"]
     
     var body: some View {
         NavigationView {            
             List {
                 ForEach(Category.allCases, id: \.self) { category in
                     CategoryRowView(categoryName: category.rawValue)
+                    Divider()
                 }
-                .navigationTitle("Category")
+                .navigationBarItems(leading: Text("Task List")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .padding(.top, 50)
+                    .padding(.bottom, 30))
             }
+            .scrollContentBackground(.hidden)
+            .background(LinearGradient(gradient: Gradient(colors: [Color.blue, Color.white]), startPoint: .top, endPoint: .bottom))
         }
         
     }
