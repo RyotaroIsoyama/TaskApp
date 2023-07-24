@@ -11,6 +11,7 @@ import Foundation
 
 class NewTaskViewViewModel: ObservableObject {
     @Published var title = ""
+    @Published var category: Category = .work
     @Published var dueDate = Date()
     
     func save() {
@@ -25,6 +26,7 @@ class NewTaskViewViewModel: ObservableObject {
         let taskId = UUID().uuidString
         let newTask = Task(id: taskId,
                            title: title,
+                           category: Category(rawValue: category.rawValue) ?? .work,
                            dueDate: dueDate.timeIntervalSince1970,
                            createDate: Date().timeIntervalSince1970,
                            isDone: false
