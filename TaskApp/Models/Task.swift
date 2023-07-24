@@ -12,4 +12,5 @@ struct Task: Codable, Identifiable{
     let title: String
     let dueDate: TimeInterval
     let createDate: TimeInterval
+    var isDone: Bool
 }

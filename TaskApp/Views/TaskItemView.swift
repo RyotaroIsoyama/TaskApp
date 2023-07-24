@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct TaskItemView: View {
+    @StateObject var viewModel = TaskItemViewViewModel()
     let task: Task
     
     var body: some View {
@@ -19,6 +20,16 @@ struct TaskItemView: View {
                 Text("\(Date(timeIntervalSince1970: task.dueDate).formatted(date: .abbreviated, time: .shortened))")
                     .font(.footnote)
             }
+            
+            Spacer()
+            
+            Button {
+                viewModel.toggle(task: task)
+            } label: {
+                Image(systemName: task.isDone ? "checkmark.circle.fill" : "circle")
+                    .foregroundColor(Color.blue)
+            }
+            .buttonStyle(PlainButtonStyle())
         }
     }
 }
@@ -28,6 +39,7 @@ struct TaskItemView_Previews: PreviewProvider {
         TaskItemView(task: .init(id: "1",
                                  title: "title",
                                  dueDate: Date().timeIntervalSince1970,
-                                 createDate: Date().timeIntervalSince1970))
+                                 createDate: Date().timeIntervalSince1970,
+                                 isDone: false))
     }
 }

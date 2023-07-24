@@ -23,9 +23,10 @@ class UpdateTaskViewViewModel: ObservableObject {
         
         let taskId = id
         let updatedTask = Task(id: taskId,
-                           title: title,
-                           dueDate: dueDate.timeIntervalSince1970,
-                           createDate: Date().timeIntervalSince1970
+                               title: title,
+                               dueDate: dueDate.timeIntervalSince1970,
+                               createDate: Date().timeIntervalSince1970,
+                               isDone: false
         )
         
         let db = Firestore.firestore()
