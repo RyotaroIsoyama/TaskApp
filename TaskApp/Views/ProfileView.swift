@@ -6,41 +6,49 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct ProfileView: View {
     @StateObject var viewModel = ProfileViewViewModel()
+    @EnvironmentObject var authViewModel: AuthViewModel
     
     var body: some View {
         NavigationView {
             VStack {
-                Image(systemName: "person.circle")
+                Image("profile-background-image")
+                    .resizable()
+                    .frame(height: 300)
+                
+                KFImage(URL(string: viewModel.user?.profileImageURL ?? ""))
                     .resizable()
                     .frame(width: 125, height: 125)
-                    .padding()
+                    .clipShape(Circle())
+                    .overlay {
+                        Circle().stroke(.white, lineWidth: 4)
+                    }
+                    .shadow(radius: 7)
+                    .offset(y: -75)
+                    .padding(.bottom, -90)
                 
                 if let user = viewModel.user {
-                    HStack {
-                        Text("Name")
-                            .bold()
-                        Text(user.name)
-                    }
-                    .padding()
+                    Text(user.name)
+                        .bold()
+                        .padding()
                     
-                    HStack {
-                        Text("")
-                            .bold()
                         Text(user.email)
-                    }
-                    .padding()
+                        .bold()
+                        .padding()
                 } else {
                     Text("Loading Profile...")
                 }
-                
+                                
                 Button {
-                    viewModel.logout()
+                    authViewModel.logout()
                 } label: {
                     Text("Logout")
                 }
+                
+                Spacer()
 
             }
             .navigationTitle("Profile")

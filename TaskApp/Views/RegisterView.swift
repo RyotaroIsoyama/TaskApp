@@ -8,24 +8,28 @@
 import SwiftUI
 
 struct RegisterView: View {
-    @StateObject var viewModel = RegisterViewViewModel()
+    @EnvironmentObject var authViewModel: AuthViewModel
     
     var body: some View {
         VStack {
+            NavigationLink(destination: ProfilePhotoSelectView(),
+                           isActive: $authViewModel.didAuthenticateUser,
+                           label: { })
+            
             HeaderView(title: "Welcome to TaskApp",
                        subtitle: "Let's create your account",
                        headerColor: Color.green)
             
             Form {
-                TextField("Name", text: $viewModel.name)
+                TextField("Name", text: $authViewModel.name)
                 
-                TextField("Email", text: $viewModel.email)
+                TextField("Email", text: $authViewModel.email)
                 
-                SecureField("Password", text: $viewModel.password)
+                SecureField("Password", text: $authViewModel.password)
                 
                 
                 Button {
-                    viewModel.register()
+                    authViewModel.register()
                 } label: {
                     ZStack {
                         RoundedRectangle(cornerRadius: 10)
