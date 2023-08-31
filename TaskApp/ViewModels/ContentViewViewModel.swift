@@ -1,25 +1,25 @@
+////
+////  ContentViewViewModel.swift
+////  TaskApp
+////
+////  Created by 久保田陽介 on 2023/07/08.
+////
 //
-//  ContentViewViewModel.swift
-//  TaskApp
+//import FirebaseAuth
+//import Foundation
 //
-//  Created by 久保田陽介 on 2023/07/08.
+//class ContentViewViewModel: ObservableObject {
+//    @Published var isLoggedIn = false
 //
-
-import FirebaseAuth
-import Foundation
-
-class ContentViewViewModel: ObservableObject {
-    @Published var isLoggedIn = false
-    
-    private var handler: AuthStateDidChangeListenerHandle?
-    
-    init() {
-        self.handler = Auth.auth().addStateDidChangeListener{ _, user in
-            if user != nil {
-                self.isLoggedIn = true
-            } else {
-                self.isLoggedIn = false
-            }
-        }
-    }
-}
+//    private var handler: AuthStateDidChangeListenerHandle?
+//
+//    init() {
+//        self.handler = Auth.auth().addStateDidChangeListener{ _, user in
+//            if user != nil {
+//                self.isLoggedIn = true
+//            } else {
+//                self.isLoggedIn = false
+//            }
+//        }
+//    }
+//}

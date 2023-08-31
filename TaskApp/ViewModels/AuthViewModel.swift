@@ -33,9 +33,10 @@ class AuthViewModel: ObservableObject {
             self.tempUserSession = user
             //self.userSession = user
             
-            let newUser = TempUser(id: userId,
+            let newUser = User(id: userId,
                                name: self.name,
                                email: self.email,
+                               profileImageURL: "",
                                joined: Date().timeIntervalSince1970)
             
             let db = Firestore.firestore()
@@ -65,6 +66,10 @@ class AuthViewModel: ObservableObject {
         } catch {
             print("Logout Error")
         }
+        
+        self.email = ""
+        self.name = ""
+        self.password = ""
     }
     
     func uploadProfileImage(_ image: UIImage) {
