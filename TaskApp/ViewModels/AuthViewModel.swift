@@ -15,50 +15,71 @@ class AuthViewModel: ObservableObject {
     @Published var password = ""
     
     @Published var didAuthenticateUser = false
-    @Published var userSession: FirebaseAuth.User?
-    private var tempUserSession: FirebaseAuth.User?
+    @Published var userSession: User?
+    private var tempUserSession: User?
 
-    init() {
-        self.userSession = Auth.auth().currentUser
+    var authService: AuthServiceProtocol
+    var firestore: FirestoreProtocol
+
+    init(authService: AuthServiceProtocol = FirebaseAuthService(), firestore: FirestoreProtocol = FirebaseFirestoreService()) {
+        self.authService = authService
+        self.firestore = firestore
+        
+        if let currentUser = Auth.auth().currentUser {
+            self.userSession = convertToCustomUser(currentUser)
+        } else {
+            self.userSession = nil
+        }
     }
     
+    func convertToCustomUser(_ firebaseUser: FirebaseAuth.User) -> User {
+        return User(id: firebaseUser.uid,
+                    name: "", // Firebaseから名前を取得する方法があればここに設定
+                    email: firebaseUser.email ?? "",
+                    profileImageURL: "", // プロフィール画像URLを設定する方法があればここに設定
+                    joined: 0) // 加入日時を設定する方法があればここに設定
+    }
+
     func register() {
-        Auth.auth().createUser(withEmail: email, password: password) { result, error in
-            guard let user = result?.user else {
-                return
-            }
-            
-            let userId = user.uid
-            
+        authService.createUser(withEmail: email, password: password) { result in
+            switch result {
+            case .success(let user):
+
+            let userId = user?.id
+
             self.tempUserSession = user
             //self.userSession = user
-            
-            let newUser = User(id: userId,
+
+            let newUser = User(id: userId ?? "",
                                name: self.name,
                                email: self.email,
                                profileImageURL: "",
                                joined: Date().timeIntervalSince1970)
-            
-            let db = Firestore.firestore()
-            
-            db.collection("users")
-                .document(userId)
+
+                self.firestore.collection("users")
+                .document(userId ?? "")
                 .setData(newUser.asDictionary()) { _ in
                     self.didAuthenticateUser = true
                 }
-        }
-    }
-    
-    func login() {
-        Auth.auth().signIn(withEmail: email, password: password) { result, error in
-            guard let user = result?.user else {
-                return
+            case .failure(let error):
+                print("User registration failed: \(error.localizedDescription)")
             }
-            
-            self.userSession = user
         }
     }
-    
+
+    func login() {
+        authService.signIn(withEmail: email, password: password) { result in
+            switch result {
+            case .success(let user):
+                self.userSession = user
+            case .failure(let error):
+                // ユーザー作成失敗時のエラーハンドリング
+                self.userSession = nil
+                print("User registration failed: \(error.localizedDescription)")
+            }
+        }
+    }
+
     func logout() {
         do {
             userSession = nil
@@ -66,15 +87,15 @@ class AuthViewModel: ObservableObject {
         } catch {
             print("Logout Error")
         }
-        
+
         self.email = ""
         self.name = ""
         self.password = ""
     }
-    
+
     func uploadProfileImage(_ image: UIImage) {
-        guard let uid = tempUserSession?.uid else { return }
-        
+        guard let uid = tempUserSession?.id else { return }
+
         ImageUploader.uploadImage(image: image) { profileImageURL in
             Firestore.firestore().collection("users")
                 .document(uid)
