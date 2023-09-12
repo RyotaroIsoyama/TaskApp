@@ -18,12 +18,12 @@ class AuthViewModel: ObservableObject {
     @Published var userSession: User?
     private var tempUserSession: User?
 
-    var authService: AuthServiceProtocol
-    var firestore: FirestoreProtocol
-
-    init(authService: AuthServiceProtocol = FirebaseAuthService(), firestore: FirestoreProtocol = FirebaseFirestoreService()) {
-        self.authService = authService
-        self.firestore = firestore
+    var authRepository: AuthRepository
+    var userRepository: UserRepository
+    
+    init(authRepository: AuthRepository = AuthRepositoryImpl(), userRepository: UserRepository = UserRepositoryImpl()) {
+        self.authRepository = authRepository
+        self.userRepository = userRepository
         
         if let currentUser = Auth.auth().currentUser {
             self.userSession = convertToCustomUser(currentUser)
@@ -41,25 +41,31 @@ class AuthViewModel: ObservableObject {
     }
 
     func register() {
-        authService.createUser(withEmail: email, password: password) { result in
+        authRepository.createUser(withEmail: email, password: password) { result in
             switch result {
             case .success(let user):
-
-            let userId = user?.id
-
-            self.tempUserSession = user
-            //self.userSession = user
-
-            let newUser = User(id: userId ?? "",
-                               name: self.name,
-                               email: self.email,
-                               profileImageURL: "",
-                               joined: Date().timeIntervalSince1970)
-
-                self.firestore.collection("users")
-                .document(userId ?? "")
-                .setData(newUser.asDictionary()) { _ in
-                    self.didAuthenticateUser = true
+                
+                let userId = user?.id
+                
+                self.tempUserSession = user
+                
+                let newUser = User(id: userId ?? "",
+                                   name: self.name,
+                                   email: self.email,
+                                   profileImageURL: "",
+                                   joined: Date().timeIntervalSince1970)
+                
+                self.userRepository.saveUser(newUser) { result in
+                    switch result {
+                    case .success(let success):
+                        if success {
+                            self.didAuthenticateUser = true
+                        } else {
+                            print("Failed to save user data to Firestore")
+                        }
+                    case .failure(let error):
+                        print("User registration failed: \(error.localizedDescription)")
+                    }
                 }
             case .failure(let error):
                 print("User registration failed: \(error.localizedDescription)")
@@ -68,7 +74,7 @@ class AuthViewModel: ObservableObject {
     }
 
     func login() {
-        authService.signIn(withEmail: email, password: password) { result in
+        authRepository.signIn(withEmail: email, password: password) { result in
             switch result {
             case .success(let user):
                 self.userSession = user
@@ -96,12 +102,24 @@ class AuthViewModel: ObservableObject {
     func uploadProfileImage(_ image: UIImage) {
         guard let uid = tempUserSession?.id else { return }
 
-        ImageUploader.uploadImage(image: image) { profileImageURL in
-            Firestore.firestore().collection("users")
-                .document(uid)
-                .updateData(["profileImageURL": profileImageURL]) { _ in
-                    self.userSession = self.tempUserSession
+        ImageUploader.uploadImage(image) { profileImageURL in
+            switch profileImageURL {
+            case .success(let profileImageURL):
+                self.userRepository.uploadUserImage(uid, profileImageURL) { result in
+                    switch result {
+                    case .success(let success):
+                        if success {
+                            self.userSession = self.tempUserSession
+                        } else {
+                            print("Failed to save user data to Firestore")
+                        }
+                    case .failure(let error):
+                        print("User registration failed: \(error.localizedDescription)")
+                    }
                 }
+            case .failure(let error):
+                print("Creating profileImageURL failed: \(error.localizedDescription)")
+            }
         }
     }
 }
