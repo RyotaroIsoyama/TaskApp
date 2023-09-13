@@ -13,6 +13,9 @@ struct TaskAppApp: App {
     
     init(){
         FirebaseApp.configure()
+        
+        let storageRepository = StorageRepositoryImpl()
+        ImageUploader.initialize(storageRepository: storageRepository)
     }
     
     var body: some Scene {

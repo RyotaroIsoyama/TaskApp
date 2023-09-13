@@ -16,7 +16,7 @@ class AuthViewModel: ObservableObject {
     
     @Published var didAuthenticateUser = false
     @Published var userSession: User?
-    private var tempUserSession: User?
+    var tempUserSession: User?
 
     var authRepository: AuthRepository
     var userRepository: UserRepository
