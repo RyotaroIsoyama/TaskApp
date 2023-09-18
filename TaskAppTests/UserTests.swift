@@ -55,7 +55,7 @@ final class UserTests: XCTestCase {
         }
     }
     
-    class MockStorageRepository: StorageRepository {
+    class MockStorageRepositoryImpl: StorageRepository {
         var uploadDataResult: Result<String, Error>?
         
         func uploadData(data: Data, to path: String, completion: @escaping (Result<String, Error>) -> Void) {
@@ -138,7 +138,7 @@ final class UserTests: XCTestCase {
     }
     
     func testUploadImage() {
-        let mockStorageRepository = MockStorageRepository()
+        let mockStorageRepository = MockStorageRepositoryImpl()
         ImageUploader.initialize(storageRepository: mockStorageRepository)
 
         mockStorageRepository.uploadDataResult = .success("https://example.com/image.jpg")
