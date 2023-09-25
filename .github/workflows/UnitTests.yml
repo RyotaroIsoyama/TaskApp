@@ -18,8 +18,8 @@ jobs:
       - name: UnitTests
         run: |
           xcodebuild test \
-            -project UnitTestApp01.xcodeproj \
-            -scheme UnitTestApp01 \
+            -project TaskApp.xcodeproj \
+            -scheme TaskApp \
             -configuration Debug \
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,OS=16.4,name=iPhone 14'
