@@ -21,7 +21,6 @@ final class TaskTests: XCTestCase {
         var savedTask: Task?
         
         var deletedTaskId: String?
-        var deleteCompletionResult: Result<Bool, Error>?
         
         func save(_ task: TaskApp.Task, _ taskId: String, completion: @escaping (Result<Bool, Error>) -> Void) {
             saveCalled = true
@@ -40,9 +39,6 @@ final class TaskTests: XCTestCase {
         
         func delete(_ taskId: String, _ userId: String, completion: @escaping (Result<Bool, Error>) -> Void) {
             deletedTaskId = taskId
-            if let result = deleteCompletionResult {
-                completion(result)
-            }
         }
     }
     
@@ -51,16 +47,27 @@ final class TaskTests: XCTestCase {
         let mockTaskRepository = MockTaskRepositoryImpl()
         let viewModel = NewTaskViewViewModel(taskRepository: mockTaskRepository)
         
-        viewModel.title = "title"
-        viewModel.category = .work
-        viewModel.dueDate = Date()
+        let expectedTitle = "title"
+        let expectedCategory = Category.work
+        let expectedDueDate = Date()
+        
+        viewModel.title = expectedTitle
+        viewModel.category = expectedCategory
+        viewModel.dueDate = expectedDueDate
         
         let expectation = XCTestExpectation(description: "Save Task")
         
         viewModel.save()
         
         XCTAssertTrue(mockTaskRepository.saveCalled)
-        XCTAssertNotNil(mockTaskRepository.savedTask)
+        
+        if let savedTask = mockTaskRepository.savedTask {
+            XCTAssertEqual(savedTask.title, expectedTitle)
+            XCTAssertEqual(savedTask.category, expectedCategory)
+            XCTAssertEqual(savedTask.dueDate, expectedDueDate.timeIntervalSince1970)
+        } else {
+            XCTFail("Saved task should not be nil")
+        }
     }
     
     func testTaskUpdate() {
@@ -69,14 +76,24 @@ final class TaskTests: XCTestCase {
         
         let taskId = "testTaskId"
         
-        viewModel.title = "title"
-        viewModel.category = .work
-        viewModel.dueDate = Date()
+        let expectedTitle = "Updated Task Title"
+        let expectedCategory = Category.work
+        let expectedDueDate = Date()
+        
+        viewModel.title = expectedTitle
+        viewModel.category = expectedCategory
+        viewModel.dueDate = expectedDueDate
         
         viewModel.update(id: taskId)
         
         XCTAssertTrue(mockTaskRepository.saveCalled)
-        XCTAssertNotNil(mockTaskRepository.savedTask)
+        if let savedTask = mockTaskRepository.savedTask {
+            XCTAssertEqual(savedTask.title, expectedTitle)
+            XCTAssertEqual(savedTask.category, expectedCategory)
+            XCTAssertEqual(savedTask.dueDate, expectedDueDate.timeIntervalSince1970)
+        } else {
+            XCTFail("Updated task should not be nil")
+        }
     }
     
     func testToggleTask() {
@@ -94,7 +111,12 @@ final class TaskTests: XCTestCase {
         viewModel.toggle(task: testTask)
         
         XCTAssertTrue(mockTaskRepository.saveCalled)
-        XCTAssertNotNil(mockTaskRepository.savedTask)
+        
+        if let savedTask = mockTaskRepository.savedTask {
+            XCTAssertEqual(savedTask.isDone, true)
+        } else {
+            XCTFail("Saved task should not be nil")
+        }
     }
     
     func testDeleteTask() {
@@ -106,8 +128,6 @@ final class TaskTests: XCTestCase {
         viewModel.delete(id: taskId)
         
         XCTAssertEqual(mockTaskRepository.deletedTaskId, taskId)
-        
-        mockTaskRepository.deleteCompletionResult = .success(true)
     }
     
     func testExample() throws {
