@@ -1,0 +1,26 @@
+name: UnitTests
+
+on:
+  push:
+    branches: [AuthServiceTest]
+
+jobs:
+  build:
+    runs-on: macOS-13
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '14.3.1'
+
+      - name: UnitTests
+        run: |
+          xcodebuild test \
+            -project UnitTestApp01.xcodeproj \
+            -scheme UnitTestApp01 \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,OS=16.4,name=iPhone 14'
+
