@@ -9,7 +9,10 @@ jobs:
     runs-on: macOS-13
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref:AuthServiceTest
 
       - uses: maxim-lobanov/setup-xcode@v1
         with:
